@@ -169,16 +169,42 @@ ILiveSDK里面的有下面两个接口可以进入直播间，二者区别在于
 	* 从1.8.2.69开始，退房接口已改成本地退出，不再与云后台有通信，所以一般情况下（除<a href="#log_disconnectroom">SDK底层异常退出</a>外），调用退房都是会成功的，即上述日志中的`ret_code`为0, 若不为0, 可查看[AVSDK客户端错误](https://www.qcloud.com/document/product/268/8423)中详细说明；
 	* 如果当前直播的时候，收到IM的互踢通知，记得先退出当前的房间，然后再作im的logout以及<a href="#log_stopcontext">停止音视频上下文</a>（不会主动退出当前的房间），否则换帐号登录时，再次使用时会有问题；
 	* 之前直接集成AVSDK的一些用户有，因为退房的时候，业务层代码问题，导致界面没有及时释放，经常会导致下一次使用时，还法正常的渲染（会出现闪屏或crash）：像这样的用户先问清楚其是用哪种方式集成的，如果是直接集成AVSDK，可询问其业务逻辑直播界面是否有及时释放；
+	* 1.8.2.69版本之后，若退房接口有报错，可优先查下是否有<a href="#log_disconnectroom">异常退房</a>
+	* 结合
+
+
 
 ### <a name="log_disconnectroom">异常退房流程</a>
-1. 作用：检查是否出现SDK因心跳超时，SDK自动退出音视频房间
-2. 关键字：
-3. 
+1. 作用：检查是否出现SDK因心跳超时，一般是因为网络原因（如断网，或丢包严重）或切后台程序挂起，SDK自动退出音视频房间
+2. 关键字：ExitRoomInternal. reason = 1005
+3. 关键日志：`017/07/14 14:24:55.862| E| 84238| Client | av_room_multi_impl.cpp(894):ExitRoomInternal      | ExitRoomInternal. reason = 1005.`
+4. 注意事项：
+	* 注意与<a href="#log_exitroom_normal">正常退房流程</a>结合使用；
+	* 注意结合[AVMonitor](http://avq.server.com/reportapp/)一起查看，AVMonitor上对用户正常或异常退房提示更明显；
 
+## <a name="log_stopcontext">停止与销毁音视频上下文</a>
+1. 作用：一般正常情况下，该日志主要伴随IMSDK登出操作，如果日志里面频繁出现该日志，可询问用户的接入方式，具体问题与<a href="#log_startcontext">开启音视频上下文</a>相同
+2. 关键字：StopContext
+3. 关键日志：如下
 
-## <a name="log_avdata">数据流情况</a>
+```
+2017/07/18 16:32:42.049| E| 28717| Client | av_context_impl.cpp(608):Stop                     | ******StopContext
+2017/07/18 16:32:42.058| E| 28717| Client | av_node_record_impl.cpp(653):ResetNodeInfo        | AVNODERECORD ResetNodeInfo. PathStopContext(50000).
+2017/07/18 16:32:42.058| E| 28717| Client | av_node_record_impl.cpp(758):RecordNodeInfo       | AVNODERECORD RecordNodeInfo. PathStopContext(50000). node = 50000, time = 16:32:42.058, ret_code = 0.
+2017/07/18 16:32:42.058| E| 28717| Client | av_node_record_impl.cpp(758):RecordNodeInfo       | AVNODERECORD RecordNodeInfo. PathStopContext(50000). node = 59999, time = 16:32:42.058, ret_code = 0.
+2017/07/18 16:32:42.059| E| 28717| Client | av_node_record_impl.cpp(498):PrintPathInfo        | AVNODERECORD PathStopContext(50000). Time. start = 16:32:42.058, end = 16:32:42.058.
+2017/07/18 16:32:42.059| E| 28717| Client | av_node_record_impl.cpp(502):PrintPathInfo        | AVNODERECORD PathStopContext(50000). TimeConsuming. total =    0.
+2017/07/18 16:32:42.059| E| 28717| Client | av_node_record_impl.cpp(506):PrintPathInfo        | AVNODERECORD PathStopContext(50000). RetCode. start = 0, end = 0.
+2017/07/18 16:32:42.060| E| 28717| Client | av_node_record_impl.cpp(192):PrintPathInfo        | AVNODEREPORT PathStartContext(1000). Time. INVALID TIME!!! start = 08:00:00.000, read_web_config_start = 08:00:00.000, send_update_cmd_start = 08:00:00.000, send_update_cmd_end = 08:00:00.000, process_updated_web_config_end = 08:00:00.000, net_channel_init_start = 08:00:00.000, net_channel_init_end = 08:00:00.000, end = 08:00:00.000.
+2017/07/18 16:32:42.060| E| 28717| Client | av_node_record_impl.cpp(196):PrintPathInfo        | AVNODEREPORT PathStartContext(1000). TimeConsuming. INVALID TIME!!! total =   -1, process_web_config =   -1(send_update_cmd =   -1) || net_channel_init =   -1.
+2017/07/18 16:32:42.061| E| 28717| Client | av_node_record_impl.cpp(203):PrintPathInfo        | AVNODEREPORT PathStartContext(1000). RetCode. ERROR!!! start = 65536, read_web_config_start = 65536, send_update_cmd_start = 65536, send_update_cmd_end = 65536, process_updated_web_config_end = 65536, net_channel_init_start = 65536, net_channel_init_end = 65536, end = 65536.
+2017/07/18 16:32:42.061| E| 28717| Client | av_node_record_impl.cpp(498):PrintPathInfo        | AVNODEREPORT PathStopContext(50000). Time. start = 16:32:42.058, end = 16:32:42.058.
+2017/07/18 16:32:42.061| E| 28717| Client | av_node_record_impl.cpp(502):PrintPathInfo        | AVNODEREPORT PathStopContext(50000). TimeConsuming. total =    0.
+2017/07/18 16:32:42.061| E| 28717| Client | av_node_record_impl.cpp(506):PrintPathInfo        | AVNODEREPORT PathStopContext(50000). RetCode. start = 0, end = 0.
+2017/07/18 16:32:42.061| E| 28717| AVGSDK | av_context_proxy_ios.cpp(63):~AVContextProxy      | context destroy
+```
 
-## <a name="log_eventid">用户事件</a>
-
-## <a name="log_stopcontext">停止音视频上下文</a>
-
+4. 注意事项
+	* `av_context_impl.cpp(608):Stop                     | ******StopContext`为`停止音视频上下文`, `av_context_proxy_ios.cpp(63):~AVContextProxy      | context destroy`为`销毁音视频上下文`, 二者缺一不可；
+	* 停止与销毁音视频上下文一般发生于：1.用户正常登出；2.收到IM的互踢消息后，业务侧退出重新登录。该环节出现问题时，可咨询用户当时的使用步骤；
+	* 如果`停止音视频上下文`时报错，一般是：1.本身没有开启音频上下文；2.最后一次直播间，没有退出成功，具体可查<a href="#log_exitroom">退房流程</a>
