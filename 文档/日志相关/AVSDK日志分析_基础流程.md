@@ -39,6 +39,20 @@
 1. 作用：去后台取spear配置，拉取到的信息可用于排查<a href="#log_enterroom">进房间</a>时的一些问题；
 2. 关键字：https
 3. 关键日志：过滤后会找到类似如`https://confvoice.qcloud.com/index.php?sdk_appid=1400012909&sdk_version=115&interface=Voice_Conf_Download&identifier=9106000&last_update_sequence=162&platform=1`的过滤信息，将其放入到流览器即可查看具体的spear配置，通过分析响应数据，判断进房间的时候的配置是否正确。
+请取配置成功，会有类似下面的日志`OnDownloadComplete http response ok `:
+
+```
+2017/07/20 21:51:49.906| E| 18638| Client | av_avcontrol_config.cpp(352):Update               | https://confvoice.qcloud.com/index.php?sdk_appid=1400030888&sdk_version=115&interface=Voice_Conf_Download&identifier=4DVND39&platform=1
+2017/07/20 21:51:49.906| E| 18638| Client | av_node_record_impl.cpp(758):RecordNodeInfo       | AVNODERECORD RecordNodeInfo. PathStartContext(1000). node = 1101, time = 21:51:49.906, ret_code = 0.
+2017/07/20 21:51:49.945| E| 18574| AVGSDK | IMChannelImpl.mm(403):___ZN7tencent2av13IMChannelI| MultiVideoConfigRequestAsynStart QAVAppChannelMgr requestCmd:cmdName
+2017/07/20 21:51:49.946| E| 30989| CmdCode| av_config_extension_impl.cpp(59):OnConfigRequestSu| OnConfigRequestSuccess bufsize:76
+2017/07/20 21:51:49.946| E| 30989| unnamed| ConfigPBProtocol.cpp(584):printConfig             | =========ConfigSystem print begin=========
+2017/07/20 21:51:49.946| E| 30989| unnamed| ConfigPBProtocol.cpp(585):printConfig             | m_ConfigInfo.m_bIsWriteLocalLog:1 
+2017/07/20 21:51:49.946| E| 30989| unnamed| ConfigPBProtocol.cpp(624):printConfig             | m_ConfigInfo.m_SwitchInfo:[0][0][0][0][0][0][0][1][0][0]
+2017/07/20 21:51:49.946| E| 30989| unnamed| ConfigPBProtocol.cpp(654):printConfig             | =========ConfigSystem print end=========
+2017/07/20 21:51:49.946| E| 30989| CmdCode| av_context_start_mobile.cpp(88):OnRequestComplete | AVContextStartImpl::OnRequestComplet complete:result=0, error_info=
+2017/07/20 21:51:50.545| E| 18638| Client | av_avcontrol_config.cpp(428):OnDownloadComplete   | OnDownloadComplete http response ok
+```
 4. 注意事项：如果在将搜索到的链接放入济览器中，返回类似以下的信息（没有看到具体的spear配置），这是因为有<font color=red>**省流机制**（SDK首次请求完spear信息成功后，会在本地缓存，并存储云后台最后一次更新序列号last_update_sequence，下次请求时带上本地存储的last_update_sequence与后台进行比对，后台发现序列号一致时，说明spear没有更新，则不返回spear配置，客户端则使用本地存储的spear配置）</font>
 ```
 {"data":{"biz_id":1400012909,"conf":[],"platform":1,"sequence":162},"errmsg":"success.","retcode":0}
