@@ -1,6 +1,6 @@
-# AVSDK日志中级查询技巧
+# AVSDK日志查询技巧
 
-## <a name="log_changecontrolrole">1. 切换角色/上下麦</a>
+## <a name="log_changecontrolrole">切换角色/上下麦</a>
 1. 作用：用于检查用户切换角色是否生效
 2. 关键字：`ChangeAVControlRole`
 3. 示例日志：
@@ -17,7 +17,7 @@
 	* 此错出错通常是：切换的角色不存在，或者角色对应的角色类型没有选择；
 
 
-## <a name="log_avdata">2. 数据流变化</a>
+## <a name="log_avdata">数据流变化</a>
 1. 作用：用于查看直播过程中，上下行数据包的变化，进而推断相关上麦用户的行为。
 2. 关键字：`AVDATA`
 3. 示例日志：
@@ -39,7 +39,7 @@
  	* 如果发现某个用户的**视频数据**没有了，可拿`tinyid`去[AVMonitor](http://avq.server.com/reportapp/)查其对应的**视频位**情况（注意此时看）；或该用户为当前日志的用户，可查其<a href="#log_eventid">用户事件</a>
  	* 如果发现某个用户的**音频数据**没有了，可拿`tinyid`去[AVMonitor](http://avq.server.com/reportapp/)查其对应的**上行音频码率**情况；或该用户为当前日志的用户，可查其<a href="#log_eventid">用户事件</a>
 
-## <a name="log_eventid">3. 用户事件</a>
+## <a name="log_eventid">用户事件</a>
 
 1. 作用：用于查看直播过程中，直播间上行用户的事件通知
 2. 关键字：`eventid =`
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
  	* 实际使用，结合用户反馈的情况，梳理对应的时候间，以分析推断用户的操作。如用户反馈画面卡住，没声明音，可查对应时间点上是否有用户的关摄像头事件(eventid = 4)或关mic事件(eventid = 6)
  	
 
-## <a name="log_requestviewlist">4. 请求画面</a>
+## <a name="log_requestviewlist">请求画面</a>
 1. 作用：用于查看画面请求状态，可以从日志中判断当前用户的观看画面的情况；
 2. 关键字：`requestviewlist`
 3. 注意事项：该项需要与<a href="AVSDK日志分析_基础流程.md#log_enterroom">进房流程查询</a处的`video_recv_mode`,`screen_recv_mode`参数配置 ，以及<a href="#log_eventid">用户事件</a>结合使用
@@ -86,14 +86,14 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 	* ILiveSDK内部对AVSDK自带的接口进行封装，内部会有记忆功能，如当前房间内有A的画面，些时B上麦时，请求画面只要传B对应的参数信息即可；
 	* 该信息可辅助查询
 
-## <a name="log_camera">5. 摄像头操作</a>
+## <a name="log_camera">摄像头操作</a>
 <a name="log_device_windows">注意：<font color=red>windows下较其他平台多一个选择摄像头麦克风输入源操作，windows下需要在进房间成功后，使用AVDeviceMgr去选择对应的设备</font></a>
 
-1. 作用：用于看用户操作摄像头相关的操作；打开摄像头，本质上要向server申请摄权限位，关闭则为清除权限位；若申请到视频位且有上行视频权限，则打开摄像头后，可上行视频，能推流成功（web侧可以观看），且后台会转发，这样其他的观众也可看到；若无视频位权限，客户端会可以上行，能推流成功，但是后台不会转发，其他使用AVSDK的看不了；
-2. 关键字：`EnableCamera`
+1. 作用：用于看用户操作摄像头相关的操作；<a name="log_camera_case">打开摄像头，本质上要向server申请摄权限位，关闭则为清除权限位；若申请到视频位且有上行视频权限，则打开摄像头后，可上行视频，能推流成功（web侧可以观看），且后台会转发，这样其他的观众也可看到；若无视频位权限，客户端会可以上行，能推流成功，但是后台不会转发，其他使用AVSDK的看不了</a>；
+2. 关键字：`EnableCamera` , `SwitchCamera`
 3. 操作摄像头时机：
-	* <a href="AVSDK日志分析_基础流程.md#log_enterroom_param">进房配置</a>：与进房的`auth_bits`有关
-	* 手动打开：
+	* <a href="AVSDK日志分析_基础流程.md#log_enterroom_param">进房配置</a>：与进房的`auth_bits`有关；
+	* 手动打开／切换/关闭摄像头；
 	* 上麦（开摄像头）／下麦（关摄像头）；
 	* 前后台切换：移动端切后台时，需要关掉摄像头，切前台要重新打开摄像头
 
@@ -114,17 +114,44 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 ```
 
 注意事项：
-*  1.9.1之后的版本，支持提前预览，摄像头操作与房间概念独立，在退出房间时，记得手动关闭摄像头（1.9.1之前退房时，SDK内部会自动关闭摄像头）；
 
-## <a name="log_mic">6. Mic操作</a>
-请查：<a href="#log_device_windows">注意事项</a>
+* 1.9.1之后的版本，支持提前预览，摄像头操作与房间概念独立，在退出房间时，记得手动关闭摄像头（1.9.1之前退房时，SDK内部会自动关闭摄像头）；
+* 上行权限跟音视权限位一般情况下可以等同理解，但有以下情况下：用户直播过程中，遇到网络中断，或网络丢包严重，或退后台等，或者过多用户拥有上行权限，过长时间没有向后台发送视频数据，此时视频位会被云后台回收，则会出现<a href="#log_camera_case">上述的情况</a>;
+
+## <a name="log_mic">Mic操作</a>
+请留意：<a href="#log_device_windows">注意事项</a>
+
+1. 作用：用于看用户操作麦克风的操作；音频相关组件在第一次使用到麦克风或扬声器时就已初始化好，`EnableMic`操作主要是向后台发送一条<a name="log_eventid">信令</a>（eventid = 5, 6）；
+2. 关键字：`EnableMic`
+3. Mic时机：
+	* <a href="AVSDK日志分析_基础流程.md#log_enterroom_param">进房配置</a>：与进房的`auth_bits`有关，以及`QAVMultiParam`中的`enableMic`；
+	* 手动打开／关闭Mic；
+	* 上麦（开Mic）／下麦（关Mic）；
+	* 前后台切换：具体与应用是否支持后台模式有关
+
+4. 关键日志：
+
+```
+2017/07/21 17:47:46.143| I| 28368| Client | av_audio_ctrl_impl.cpp(446):EnableMic             | ******EnableMic. isEnable = 1
+2017/07/21 17:47:46.145| I| 28368| Client | av_audio_ctrl_impl.cpp(475):EnableMic             | ******EnableMicing...
+2017/07/21 17:47:47.200| A| 18570| CMultiM| CMultiMediaEngine.cpp(148):MultiSpeechEngineLog   | AudioEngineLog [TRAE] [INFO] [QTTopo.cpp:415] $ EnableMic: on
+2017/07/21 17:47:47.203| A| 18570| CMultiM| CMultiMediaEngine.cpp(148):MultiSpeechEngineLog   | AudioEngineLog [TRAE] [INFO] [QTTopo.cpp:415] $ EnableMic: on
+2017/07/21 17:47:47.263| A| 18570| CMultiM| CMultiMediaEngine.cpp(148):MultiSpeechEngineLog   | AudioEngineLog [TRAE] [INFO] [QTTopo.cpp:415] $ EnableMic: off
+2017/07/21 17:47:47.305| A| 18570| CMultiM| CMultiMediaEngine.cpp(148):MultiSpeechEngineLog   | AudioEngineLog [TRAE] [INFO] [QTTopo.cpp:415] $ EnableMic: on
+
+```
+
+注意事项：
+
+* 注意与<a href="#log_eventid">用户事件</a>结合使用
 
 
-## <a name="log_audioencdec">7. 音频编解码相关</a>
+<font color=red> 音频编解码相关 一直是音频组在查，相应的代码以及日志细节未同步，后续被充 </font>
+## <a name="log_audioencdec">音频编解码相关</a>
 
-## <a name="log_videoencdec">8. 视频编解码相关</a>
+## <a name="log_videoencdec">视频编解码相关</a>
 
-## <a name="log_videoenc">8.1 视频编码相关</a>
+## <a name="log_videoenc">视频编码相关</a>
 1. 作用：查看视频上行视频帧信息变化，如果上行帧变化大，会引影响其他观看用户
 2. 关键字：`capfps` 、`encSendfps `
 3. 示例日志：
@@ -133,7 +160,7 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 2017/07/20 16:37:56.562| E| 28368| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :249 ifec:45 pfec:0 dwPkt_S:940 encSendfps:249 encSendbitrate:1127 encbit 1090  0
 ```
 
-## <a name="log_videodec">8.2 视频解码相关</a>
+## <a name="log_videodec">视频解码相关</a>
 1. 作用：查看视频上行视频帧信息变化，如果上行帧变化大，会引影响其他观看用户
 2. 关键字：`decoderfps`
 3. 示例日志：
@@ -148,7 +175,7 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 2017/07/18 19:34:27.095| D| 12812| CVideoD| VideoDecoder.cpp(519):DecodeFrame                 | WARNING!!! CVideoDecoder::it can not be decode. CHN = 0 nFrameType = 3, bCanDecode = 0, m_enDataType = 1, nGOPIndex = 233, nFrmIdx 2 nRefFrameIndex = 0, m_nLastGOPIndex = 0, m_nLastFrameIndex = 0, m_nLastIFrameIndex = 0, m_nLastSPFrameIndex = 0, m_nLastGFFrameIndex = 0
 ```
 
-## <a name="log_net">9. 网络情况相关</a>
+## <a name="log_net">网络情况相关</a>
 1. 作用：查看用户的直播过程中网络包丢包情况，以及重传之后的丢包情况；如果丢包较严重。注意此处与[AVMonitor](http://avq.server.com/reportapp/)丢包率的区别：如果用户侧丢包严重，有可能上传的心跳包都丢失，这样AVMonitor在绘制时，默认的处理是填0, 有可能监控上看到的丢包率是0, 但实际看到的直播效果很差；
 2. 关键字：`CurLostRate`可查网络包丢包情况 , `UDTS CalcSendLoss dwNoAckNum`可查重传之后的丢包情况
 3. 示例日志：
@@ -176,7 +203,7 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 
 
 
-## <a name="log_dumpaudio">10. 如何dump音频数据</a>
+## <a name="log_dumpaudio">如何dump音频数据</a>
 
 
 ### <a name="log_dumpaudio_ios">iOS上dump音频数据</a>
@@ -197,7 +224,7 @@ indev
 ### <a name="log_dumpaudio_android">android上dump音频数据</a>
 ### <a name="log_dumpaudio_windows">windows上dump音频数据</a>
 </font>
-## <a name="log_dumpvideo">11. 如何dump视频帧数据</a>
+## <a name="log_dumpvideo">如何dump视频帧数据</a>
 
 <font color=red> 以下待补充
 ### <a name="log_dumpvideo_ios">iOS上dump视频数据</a>
@@ -214,7 +241,7 @@ indev
 
 1. 把这个<a href="avsdk_config.ini">`avsdk_config.ini`</a>文件放到exe所在目录下;
 2. 开始一场直播后，会在d盘根目录生成编码后的录像文件`encode.264`;
-3. 将`encode.264`使用工具`Elecard StreamEye`打开（工具较转业，可找mortyzhu看下）；
+3. 将`encode.264`使用工具`Elecard StreamEye`打开（工具较专业，可找mortyzhu看下）；
 
 
 
