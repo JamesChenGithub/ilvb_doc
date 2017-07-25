@@ -1,3 +1,4 @@
+<!--AVSDK日志分析_基础流程.md-->
 # AVSDK日志基本查询技巧
 ## 日志的介绍
 * 日志的作用 ：主要记录了AVSDK调用接口的顺序。可通过日志，查用户调用AVSDK的API情况，分析使用过程出现的问题；
@@ -109,7 +110,7 @@
 2017/07/11 17:08:58.318| E| 18637| multi_r| multi_room_network_impl.cpp(479):OnConnect        | *******************Channel connected successfully.*******************
 ```
 
-4. 常见问题：
+4. <a name="log_enterroom_ipaddress_problems">常见问题</a>：
 
 * 	对于一些受限网，或者禁端口的网络，进房一般不会成功，或者进房要等10s以上，可根据这一现象，排查进房进是否有连接上接口机;
 *  如果用户反馈的是一直进不了房间，可询问用户是否使用的是ipv6环境（海外运营商环境居多），可让用户访问[ipv6测试地址](http://test-ipv6.com/index.html.zh_CN)，然后拿到截图信息，即可判断用户环境了。如之前猎豹反馈美国用用户在运营商网络下，进房不成功，后SDK排查是底层xplatform判断网络协议栈逻辑有误导致，如有同类型问题，可引导用户更新1.9.1.17之后的版本;
@@ -201,6 +202,9 @@ ILiveSDK里面的有下面两个接口可以进入直播间，二者区别在于
 4. 注意事项：
 	* 注意与<a href="#log_exitroom_normal">正常退房流程</a>结合使用；
 	* 注意结合[AVMonitor](http://avq.server.com/reportapp/)一起查看，AVMonitor上对用户正常或异常退房提示更明显；
+
+<!--## 切换房间-->
+
 
 ## <a name="log_stopcontext">停止与销毁音视频上下文</a>
 1. 作用：一般正常情况下，该日志主要伴随IMSDK登出操作，如果日志里面频繁出现该日志，可询问用户的接入方式，具体问题与<a href="#log_startcontext">开启音视频上下文</a>相同
