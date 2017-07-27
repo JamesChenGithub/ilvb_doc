@@ -146,31 +146,48 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 
 * 注意与<a href="#log_eventid">用户事件</a>结合使用
 
-
-<font color=red> 音频编解码相关 一直是音频组在查，相应的代码以及日志细节未同步，后续被充 </font>
 ## <a name="log_audioencdec">音频编解码相关</a>
 
-## <a name="log_videoencdec">视频编解码相关</a>
+* 主播无声音查看：<a href="AVSDK主播无声音问题定位手册.docx">AVSDK主播无声音问题定位手册.docx</a>
+* 观众无声音查看：<a href="AVSDK观众无声音问题定位手册.docx">AVSDK观众无声音问题定位手册.docx</a>
+* 伴奏相关可查看：<a href="伴奏文档1.0.doc">伴奏文档1.0.doc</a>
+
+
+
 
 ## <a name="log_videoenc">视频编码相关</a>
-1. 作用：查看视频上行视频帧信息变化，如果上行帧变化大，会引影响其他观看用户
-2. 关键字：`capfps` 、`encSendfps `
+1. 作用：查看视频上行视频帧信息变化，如果上行帧数变化大，可结合<a href="#log_net">网络情况相关</a>对比一下丢包
+2. 关键字：`capfps` 、`encSendfps`， `EncodeFrame`，相关日志2s打一次
 3. 示例日志：
 
 ```
-2017/07/20 16:37:56.562| E| 28368| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :249 ifec:45 pfec:0 dwPkt_S:940 encSendfps:249 encSendbitrate:1127 encbit 1090  0
+2017/07/27 13:41:48.527| E| 18592| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :199 ifec:20 pfec:20 dwPkt_S:760 encSendfps:200 encSendbitrate:505 encbit 486  0
+2017/07/27 13:41:50.529| E| 18592| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :200 ifec:20 pfec:20 dwPkt_S:821 encSendfps:200 encSendbitrate:575 encbit 548  0
+2017/07/27 13:41:52.532| E| 18592| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :199 ifec:20 pfec:20 dwPkt_S:881 encSendfps:199 encSendbitrate:568 encbit 540  0
+2017/07/27 13:41:54.544| E| 18592| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :199 ifec:20 pfec:20 dwPkt_S:881 encSendfps:199 encSendbitrate:568 encbit 540  0
+2017/07/27 13:41:56.549| E| 18592| CVideoE| VideoEncSession.cpp(977):GetEncVideoStat          | capfps :200 ifec:20 pfec:20 dwPkt_S:942 encSendfps:201 encSendbitrate:517 encbit 498  0
 ```
+```
+2017/07/27 13:41:27.949| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:11 nFrameType:0 nFrameIndex:0 nEncodeIndex 400 
+2017/07/27 13:41:29.954| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:12 nFrameType:0 nFrameIndex:0 nEncodeIndex 440 
+2017/07/27 13:41:32.000| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:13 nFrameType:0 nFrameIndex:0 nEncodeIndex 480 
+2017/07/27 13:41:33.959| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:14 nFrameType:0 nFrameIndex:0 nEncodeIndex 520 
+2017/07/27 13:41:35.956| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:15 nFrameType:0 nFrameIndex:0 nEncodeIndex 560 
+2017/07/27 13:41:37.954| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:16 nFrameType:0 nFrameIndex:0 nEncodeIndex 600 
+2017/07/27 13:41:39.953| E| 18649| CVideoE| VideoEncoder.cpp(2609):EncodeFrame                | Begin encode nGopIndex:17 nFrameType:0 nFrameIndex:0 nEncodeIndex 640 
+```
+
 
 ## <a name="log_videodec">视频解码相关</a>
 1. 作用：查看视频上行视频帧信息变化，如果上行帧变化大，会引影响其他观看用户
-2. 关键字：`decoderfps`
+2. 关键字：`decoderfps`, `DecodeFrame`
 3. 示例日志：
 
 ```
 2017/07/18 19:38:49.886| D| 10943| CMultiM| CMultiMediaEngine.cpp(2961):GetRecvVideoStat      | decoderfps 184 bit 761 delay 0 loss 0  hwdec = 02017/07/18 19:38:51.898| D| 10943| CMultiM| CMultiMediaEngine.cpp(2961):GetRecvVideoStat      | decoderfps 93 bit 681 delay 0 loss 0  hwdec = 02017/07/18 19:38:51.898| D| 10943| CMultiM| CMultiMediaEngine.cpp(2961):GetRecvVideoStat      | decoderfps 93 bit 681 delay 0 loss 0  hwdec = 02017/07/18 19:38:53.911| D| 10943| CMultiM| CMultiMediaEngine.cpp(2961):GetRecvVideoStat      | decoderfps 114 bit 739 delay 0 loss 0  hwdec = 0
 	
 ```
-备注： 通常`decoderfps`波动较大时，会大量伴随出现下面的日志（可搜关键字`can not be decode`），即出现观看视频卡问题
+备注： 通常`decoderfps`波动较大时，会大量伴随出现下面的日志（可搜关键字`DecodeFrame ` `can not be decode`），即出现观看视频卡问题，一般解码出错的原因是网络丢包，导致参考帧丢失，解码失败
 
 ```
 2017/07/18 19:34:27.095| D| 12812| CVideoD| VideoDecoder.cpp(519):DecodeFrame                 | WARNING!!! CVideoDecoder::it can not be decode. CHN = 0 nFrameType = 3, bCanDecode = 0, m_enDataType = 1, nGOPIndex = 233, nFrmIdx 2 nRefFrameIndex = 0, m_nLastGOPIndex = 0, m_nLastFrameIndex = 0, m_nLastIFrameIndex = 0, m_nLastSPFrameIndex = 0, m_nLastGFFrameIndex = 0
@@ -201,6 +218,36 @@ typedef NS_ENUM(NSInteger, QAVUpdateEvent) {    QAV_EVENT_ID_NONE              
 备注：
 
 * `dwSendTotalNum`为总重传发包数，`dwNoAckNum`为重传丢包数，`dwSendLossRate`为重传丢包率；计算规则：`dwSendLossRate` = `dwNoAckNum` ／ `dwSendTotalNum` * 10000;
+
+### <a name="log_net_send">UDT发包日志</a>
+1. 作用：查看上行端网络发包情况2. 关键字：`OutPacketNew Subtype`UDT出包日志，通常2S一次
+3. 示例日志：
+
+```
+2017/07/27 11:39:35.436| E| 10063| CmdCode| AVGUDTRecv.cpp(1807):OutPacketAudioNew            | OutPacketNew Subtype:1 Seq:15051 28106723 TimelineOut:2183188355 METimeStamp:2183188711 DataLen:441 Jitter:41 Tickout:102 FrameType:1 GOP:0 FrameIdx:0 TotalPkg:0 AudPlayDelay:357 Uin:144115199612954932 OutStamp:2183189132
+2017/07/27 11:39:37.476| E| 10063| CmdCode| AVGUDTRecv.cpp(1807):OutPacketAudioNew            | OutPacketNew Subtype:1 Seq:15104 28106776 TimelineOut:2183190490 METimeStamp:2183190833 DataLen:343 Jitter:45 Tickout:10 FrameType:1 GOP:0 FrameIdx:0 TotalPkg:0 AudPlayDelay:379 Uin:144115199612954932 OutStamp:2183191172
+2017/07/27 11:39:39.479| E| 10063| CmdCode| AVGUDTRecv.cpp(1807):OutPacketAudioNew            | OutPacketNew Subtype:1 Seq:15154 28106826 TimelineOut:2183192517 METimeStamp:2183192846 DataLen:329 Jitter:45 Tickout:8 FrameType:1 GOP:0 FrameIdx:0 TotalPkg:0 AudPlayDelay:384 Uin:144115199612954932 OutStamp:2183193175
+```
+
+备注：
+* 如果网络稳定，`Seq`增量变化不会太大，如果波动大可结合[AVMonitor](http://avq.server.com/reportapp/)上的丢包率，以及是否有下行音视频数据看下；
+* 适当看下[AVMonitor](http://avq.server.com/reportapp/)上CPU变化情况是否能与发包变时对得上，有些情况下是用户没有做压测，线上消息量大时，就会影响采集，间接影响发包数；
+
+### <a name="log_net_recv">UDT收包日志</a>
+1. 作用：查看下行端网络收包情况2. 关键字：`OnDataHandle `UDT收包日志，通常2S一次
+3. 示例日志：
+
+```
+2017/07/27 11:39:34.861| E| 9081 | CmdCode| AVGUDTRecv.cpp(658):OnDataHandleNew               | OnDataHandle: SubType 1 seq 140646 74763636 FT 1 PkgIdx  0 TotalPkgCnt  0 fecN  0 FrmIdx  0 GopIdx  0 dataTS 2183188459 AudPlayDelay 382 Uin 144115199612798687
+2017/07/27 11:39:36.883| E| 9081 | CmdCode| AVGUDTRecv.cpp(658):OnDataHandleNew               | OnDataHandle: SubType 1 seq 140697 74763687 FT 1 PkgIdx  0 TotalPkgCnt  0 fecN  0 FrmIdx  0 GopIdx  0 dataTS 2183190498 AudPlayDelay 388 Uin 144115199612798687
+2017/07/27 11:39:38.881| E| 9081 | CmdCode| AVGUDTRecv.cpp(658):OnDataHandleNew               | OnDataHandle: SubType 1 seq 140747 74763737 FT 1 PkgIdx  0 TotalPkgCnt  0 fecN  0 FrmIdx  0 GopIdx  0 dataTS 2183192490 AudPlayDelay 391 Uin 144115199612798687
+2017/07/27 11:39:40.880| E| 9081 | CmdCode| AVGUDTRecv.cpp(658):OnDataHandleNew               | OnDataHandle: SubType 1 seq 140797 74763787 FT 1 PkgIdx  0 TotalPkgCnt  0 fecN  0 FrmIdx  0 GopIdx  0 dataTS 2183194498 AudPlayDelay 369 Uin 144115199612798687
+2017/07/27 11:39:42.914| E| 9081 | CmdCode| AVGUDTRecv.cpp(658):OnDataHandleNew               | OnDataHandle: SubType 1 seq 140848 74763838 FT 1 PkgIdx  0 TotalPkgCnt  0 fecN  0 FrmIdx  0 GopIdx  0 dataTS 2183196530 AudPlayDelay 371 Uin 144115199612798687
+```
+
+备注：
+* 如果网络稳定，`Seq`增量变化不会太大，如果波动大可结合[AVMonitor](http://avq.server.com/reportapp/)上的丢包率，以及上行音视频数据看下；
+* 适当看下[AVMonitor](http://avq.server.com/reportapp/)上CPU变化情况是否能与发包变时对得上，有些情况下是用户没有做压测，线上消息量大时，就会影响采集，间接影响收包数，但一般影响较小；
 
 
 
