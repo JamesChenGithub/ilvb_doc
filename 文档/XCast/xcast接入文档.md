@@ -6,7 +6,7 @@
 ##  <a name="xcast_beforestart">准备工作（optional）</a>
 ### <a name="xcast_account">帐号接入</a>
 1. IMSDK试接入 : IMSDK做登录，登录成功后使用对应帐号的tinyid作帐号传入xcast;
-2. 非IMSDK方式接入 : 业务层将自有自符串帐号映身成数据帐号，然后传入xcast;  <font color="red">并做好鉴权逻辑（缺失如何鉴权 （authbuf））</font>
+2. 非IMSDK方式接入 : 业务层将自有自符串帐号映身成数字型帐号，然后传入xcast;  <font color="red">并做好鉴权逻辑（缺失如何鉴权 （authbuf））</font>
 
 ### <a name="xcast_spear">spear配置</a>
 1. 静态配置：流览器拼spear url , 获取到spear的json串，以{$sdkappid}.conf方式存储到<font color="red">指定目录（各平台对应目录未确认）</font>;
