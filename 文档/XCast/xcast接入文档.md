@@ -325,7 +325,7 @@ static int32_ton_stat_tips(void *user_data, xcast_variant_t *e){  xcast_data_
 
 // 参数配置
 
-xcast_data_t       params, auth_info, track;	// 房间号，接收方式，角色	params["relation_id"] = 500012;
+	xcast_data_t       params, auth_info, track;	// 房间号，接收方式，角色	params["relation_id"] = 500012;
 	params["auto_recv"] = true;
 	params["role"]="LiveGuest";
 	
@@ -370,10 +370,46 @@ xcast_data_t       params, auth_info, track;	// 房间号，接收方式，角
 接口声明：
 
 ```
+/* * close xcast streaming. 
+* id : 与xcast_start_stream时传入的相同
+* 返回值 ： 0 成功，非0失败*/xcast_export int32_t xcast_close_stream(const char *id);
 
 ```
 
+调用xcast_close_stream后，会收到一次回调（断开连接）如下，具体可在  <a href="#xcast_handle_event_systemeventcallback">流事件回调处理</a>中查看
+
+```
+ state ： 3(xc_stream_closed） 断开链接 ；  回调示例 ：["state":int32(3),"err":int32(0),"type":int32(1),"src":"67890"] 
+
+```
+
+
 ### <a name = "xcast_shutdown">xcast\_shutdown</a> (等同于AVSDK stopContext)
+接口声明：
+
+```
+/** shutdown xcast after streaming.*/xcast_export void xcast_shutdown(void);
+
+```
+
+示例代码：
+
+```
+	// 如果当前正在推流
+ 	if (_is_start_streaming)
+ 	{
+ 		// 停止当前流
+ 		xcast_close_stream(streamid);
+ 	}
+ 	
+ 	xcast_shutdown();
+
+
+```
+注意事项：
+1. 调用`xcast_shutdown`，内部会注销所有回调监听；
+2. 如果当前有`xcast_start_stream`, 在没有`xcast_close_stream`前提下，也可以调用`xcast_shutdown`，但是这样不会收到`xcast_close_stream`的回调，建议业务层在调用`xcast_close_stream`后再`xcast_shutdown`，或者在`xcast_close_stream`回调里面再`xcast_shutdown`；
+
 
 
 
@@ -390,12 +426,12 @@ xcast_data_t       params, auth_info, track;	// 房间号，接收方式，角
 #### statistic_tips-->
 
 
-## <a name ="other">其他</a>
+<!--## <a name ="other">其他</a>
 
 ### <a name ="xcast_get_property">xcast\_get_property</a> (kvc/kvo方式)
-### <a name ="xcast_set_property">xcast\_set_property</a> (kvc/kvo方式)
+### <a name ="xcast_set_property">xcast\_set_property</a> (kvc/kvo方式)-->
 
 
 
-## 内部知晓
-对用xcast的用户开白名单 （xcast使用的是tinyid，开白名单之后，推流录制才可以查） 
+<!--## 内部知晓
+对用xcast的用户开白名单 （xcast使用的是tinyid，开白名单之后，推流录制才可以查） -->
