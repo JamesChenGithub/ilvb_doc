@@ -6,9 +6,23 @@
 
 ## <a name="xcast_set_property">xcast\_set_property</a>
 
+
+
+#<a name="xcast_device"> 设备 </a>
+
+在<a href="xcast_flow.md?#xcast_handle_event_regist">注册监听后，是通过<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">XC_EVENT_DEVICE事件</a>回调出来的。业务上只需要详细了解回调内容并解析，即可做到设备的监听以及处理；
+
+## <a name="xcast_device_deviceinfo"> 设备信息回调 </a>
+
+
+
+
+
+
 ## <a name="xcast_device_hotplug">设备热插拔</a>
 
-## <a name="xcast_device_detect"> 设备检测 </a>
+
+
 ### <a name="xcast_device_detect_camera"> 摄像头检测 </a>
 ### <a name="xcast_device_detect_mic"> 麦克风检测 </a>
 ### <a name="xcast_device_detect_speaker"> 扬声器检测 </a>
