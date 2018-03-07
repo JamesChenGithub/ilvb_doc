@@ -346,7 +346,9 @@ static int32_ton_stat_tips(void *user_data, xcast_variant_t *e){  xcast_data_
 	// 方式3. 自动鉴权
 	params["auth_type"] = xc_auth_manual;
 	auth_info["auth_bits"] = -1;
-	auth_info["account_type"] = 18454;	auth_info["expire_time"] = 1800;	const  char *secret_key="加密串"; // 互动直播控制台上创建应该时生成的	auth_info.put_bytes("secret_key", (const uint8_t *)secret_key, (uint32_t)strlen(secret_key));		params.put("auth_info", auth_info);// 自定义采集（optional）,视频业务逻辑情况定	track["ext-video-capture"] = true;    /* allow video track to use external capture */	track["ext-audio-capture"] = true;    /* allow audio track to use external capture */	track["ext-audio-playback"] = true;   /* allow audio track to use external playback */	params["track"] = track;
+	auth_info["account_type"] = 18454;	auth_info["expire_time"] = 1800;	const  char *secret_key="加密串"; // 互动直播控制台上创建应该时生成的
+	
+	auth_info.put_bytes("secret_key", (const uint8_t *)secret_key, (uint32_t)strlen(secret_key));		params.put("auth_info", auth_info);// 自定义采集（optional）,视频业务逻辑情况定	track["ext-video-capture"] = true;    /* allow video track to use external capture */	track["ext-audio-capture"] = true;    /* allow audio track to use external capture */	track["ext-audio-playback"] = true;   /* allow audio track to use external playback */	params["track"] = track;
 
 	xc_print_variant(params);   int32_t  rt = xcast_start_stream(stream, params);   if (XCAST_OK != rt) {
    		// TODO：进房失败；      // ui_xcast_err(rt, xcast_err_msg(), user_data);   }
