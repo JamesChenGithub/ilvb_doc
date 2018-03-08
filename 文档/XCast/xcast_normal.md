@@ -271,80 +271,6 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 
 ```/** // 媒体流属性: 获取指定媒体流包含的轨道列表* "stream.%s.track":{*   "get":{*     "return":[*       // "null"表示不存在*       null,*       // 所有轨道名的字符串数组*       ["vstring"]*     ]*   }* },*/#define XC_STREAM_TRACK                     "stream.%s.track"
 ```
-```flow
-s=start:开始
-e=end:结束
-o=operation:操作项
-
-s-o-e
-```
-
-
-
-```flow
-
-st=>start: Start
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-e=>end
-st->op->cond
-cond(yes)->e
-cond(no)->op
-
-```
-```
-flow
-st=>start: Start|past:>http://www.google.com[blank]
-e=>end: End:>http://www.google.com
-op1=>operation: get_hotel_ids|past
-op2=>operation: get_proxy|current
-sub1=>subroutine: get_proxy|current
-op3=>operation: save_comment|current
-op4=>operation: set_sentiment|current
-op5=>operation: set_record|current
-
-cond1=>condition: ids_remain空?
-cond2=>condition: proxy_list空?
-cond3=>condition: ids_got空?
-cond4=>condition: 爬取成功??
-cond5=>condition: ids_remain空?
-
-io1=>inputoutput: ids-remain
-io2=>inputoutput: proxy_list
-io3=>inputoutput: ids-got
-
-st->op1(right)->io1->cond1
-cond1(yes)->sub1->io2->cond2
-cond2(no)->op3
-cond2(yes)->sub1
-cond1(no)->op3->cond4
-cond4(yes)->io3->cond3
-cond4(no)->io1
-cond3(no)->op4
-cond3(yes, right)->cond5
-cond5(yes)->op5
-cond5(no)->cond3
-op5->e
-
-作者：Jlan
-链接：https://www.jianshu.com/p/02a5a1bf1096
-來源：简书
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!--以下暂不加，VIPKID未用到
@@ -383,6 +309,18 @@ op5->e
 ```
 #define XC_STREAM_STATE                     "stream.%s.state"    // xcast_start_stream中传入的streamid#define XC_STREAM_TRACK                     "stream.%s.track"    // xcast_start_stream中传入的streamid#define XC_TRACK_ENABLE                     "stream.%s.%s.enable"  // 第一个为，streamid，第二个为 [上行：video-out,audio-out,sub-video-out, 下行：video-in,audio-in,sub-video-in]#define XC_TRACK_ENABLE                     "stream.%s.%s.enable"#define XC_TRACK_STATE                      "stream.%s.%s.state"#define XC_TRACK_STATE                      "stream.%s.%s.state"#define XC_TRACK_CAPTURE                    "stream.%s.%s.capture"#define XC_TRACK_CAPTURE                    "stream.%s.%s.capture"#define XC_CAMERA_PREVIEW                   "device.camera.%s.preview"#define XC_CAMERA_STATE                     "device.camera.%s.state"#define XC_CAMERA_PREPROCESS                "device.camera.%s.preprocess"#define XC_MIC_STATE                        "device.mic.%s.state"#define XC_MIC_LOOPBACK                     "device.mic.%s.loopback"#define XC_MIC_VOLUME                       "device.mic.%s.volume"#define XC_SPEAKER_ENABLE                   "device.speaker.%s.enable"#define XC_SPEAKER_EARPHONE_MODE            "device.speaker.%s.earphone-mode"#define XC_SPEAKER_VOLUME                   "device.speaker.%s.volume"#define XC_DEVICE_EXTERNAL_INPUT            "device.external.%s.input"#define XC_DEVICE_EXTERNAL_TYPE            "device.external.%s.type"#define XC_DEVICE_EXTERNAL_STATE            "device.external.%s.state"#define XC_MIC_DYNAMIC_VOLUME               "device.mic.%s.dynamic-volume"#define XC_MIC_MIX                          "device.mic.%s.mix"#define XC_MIC_MIX_SYNC                     "device.mic.%s.mix-sync"
 
+```
+
+```flow
+st=>start: start:>http://www.baidu.com
+op1=>operation: 操作1
+cond1=>condition: YES or NO?
+sub=>subroutine: 子程序
+e=>end
+
+st->op1->cond1
+cond1(yes)->e
+cond1(no)->sub(right)->op1  
 ```
 
 
