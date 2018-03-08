@@ -254,11 +254,83 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 ```
 
 
+## <a name="xcast_room">流</a>
 
 
 
+### 获取流列表
+
+```
+/** // 媒体流属性: 获取xcast中媒体流列表* "stream":{*   "get":{*     "return":[*       // "null"表示不存在*       null,*       // 所有媒体流名的字符串数组*       ["vstring"]*     ]*   }* },*/#define XC_STREAM                           "stream"```
+
+### 获取流状态
+
+```/** // 媒体流属性: 获取指定媒体流状态* "stream.%s.state":{*   "get":{*     "return":[*       // "null"表示不存在*       null,*       // 媒体流状态：*       ["vstring"]*     ]*   }* },*/#define XC_STREAM_STATE                     "stream.%s.state"```
+
+### 获取流媒体信息
+
+```/** // 媒体流属性: 获取指定媒体流包含的轨道列表* "stream.%s.track":{*   "get":{*     "return":[*       // "null"表示不存在*       null,*       // 所有轨道名的字符串数组*       ["vstring"]*     ]*   }* },*/#define XC_STREAM_TRACK                     "stream.%s.track"
+```
+```flow
+s=start:开始
+e=end:结束
+o=operation:操作项
+
+s-o-e
+```
 
 
+
+```flow
+
+st=>start: Start
+op=>operation: Your Operation
+cond=>condition: Yes or No?
+e=>end
+st->op->cond
+cond(yes)->e
+cond(no)->op
+
+```
+```
+flow
+st=>start: Start|past:>http://www.google.com[blank]
+e=>end: End:>http://www.google.com
+op1=>operation: get_hotel_ids|past
+op2=>operation: get_proxy|current
+sub1=>subroutine: get_proxy|current
+op3=>operation: save_comment|current
+op4=>operation: set_sentiment|current
+op5=>operation: set_record|current
+
+cond1=>condition: ids_remain空?
+cond2=>condition: proxy_list空?
+cond3=>condition: ids_got空?
+cond4=>condition: 爬取成功??
+cond5=>condition: ids_remain空?
+
+io1=>inputoutput: ids-remain
+io2=>inputoutput: proxy_list
+io3=>inputoutput: ids-got
+
+st->op1(right)->io1->cond1
+cond1(yes)->sub1->io2->cond2
+cond2(no)->op3
+cond2(yes)->sub1
+cond1(no)->op3->cond4
+cond4(yes)->io3->cond3
+cond4(no)->io1
+cond3(no)->op4
+cond3(yes, right)->cond5
+cond5(yes)->op5
+cond5(no)->cond3
+op5->e
+
+作者：Jlan
+链接：https://www.jianshu.com/p/02a5a1bf1096
+來源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
 
 
 
