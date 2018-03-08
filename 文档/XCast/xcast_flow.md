@@ -230,7 +230,7 @@ void xc_print_variant(xcast_data_t evt)
 
 ```
 
-示例代码
+<a name="xcast_handle_event_trackeventcallback_samplecode">示例代码</a>
 
 ```
 /* 流轨道状态通知： 更新UI中媒体流轨道状态 */static int32_ton_track_event(void *user_data, xcast_variant_t *e){  xcast_data_t            evt(e);
@@ -258,10 +258,11 @@ void xc_print_variant(xcast_data_t evt)
 
 ```
 
-示例代码
+<a name = "xcast_device_event_samplecode">示例代码</a>
 
 ```
-/* 设备事件通知： 更新UI中设备状态 */static int32_ton_device_event(void *user_data, xcast_variant_t *e){  xcast_data_t        evt(e);  xc_print_variant(evt);  std::string         dev;  int32_t             state;  switch ((int32_t)evt["type"]) {  case xc_device_added:    /* 设备插入 */    ui_device_added(evt["src"], evt["class"], true, user_data);    break;  case xc_device_updated:    /* 设备更新 */    ui_device_update(evt["src"], evt["class"], evt["state"], evt["err"], evt["err_msg"], user_data);#if defined(XCAST_EXTERNAL_VIDEO)    dev = (const char *)evt["src"];    state = evt["state"];    if (dev == "ext1") {      if (state == xc_device_running) {        /* TODO: start external capture here */        xcast_inject_video((const uint8_t *)0xFFFFFFFF, 4096, 480, 320);      } else if (state == xc_device_stopped) {        /* TODO: stop external capture here */      }    }#endif    break;  case xc_device_removed:    /* 设备拔出 */    ui_device_added(evt["src"], evt["class"], false, user_data);    break;  case xc_device_preprocess:    /* 设备预处理 */    ui_device_preprocess(evt, user_data);    break;  case xc_device_preview:    /* 设备预览 */    ui_device_preview(evt, user_data);    break;  default:    break;  }  return XCAST_OK;}
+/* 设备事件通知： 更新UI中设备状态 */static int32_ton_device_event(void *user_data, xcast_variant_t *e){  xcast_data_t        evt(e);  xc_print_variant(evt);  std::string         dev;  int32_t             state;  switch ((int32_t)evt["type"]) {  case xc_device_added:    /* 设备插入 */    ui_device_added(evt["src"], evt["class"], true, user_data);    break;  case xc_device_updated:    /* 设备更新 */    ui_device_update(evt["src"], evt["class"], evt["state"], evt["err"], evt["err_msg"], user_data);#if defined(XCAST_EXTERNAL_VIDEO)    dev = (const char *)evt["src"];    state = evt["state"];    if (dev == "ext1") {      if (state == xc_device_running) {        /* TODO: start external capture here */        xcast_inject_video((const uint8_t *)0xFFFFFFFF, 4096, 480, 320);      } else if (state == xc_device_stopped) {        /* TODO: stop external capture here */      }    }#endif    break;  case xc_device_removed:    /* 设备拔出 */    ui_device_added(evt["src"], evt["class"], false, user_data);    break;  case xc_device_preprocess:    /* 设备预处理 */    ui_device_preprocess(evt, user_data);    break;  case xc_device_preview:    /* 设备预览 */
+    // 通过该回调可以拿到摄像头采集的数据，交由业务层上渲染    ui_device_preview(evt, user_data);    break;  default:    break;  }  return XCAST_OK;}
 ```
 
 ##### <a name="xcast_handle_event_tipseventcallback">统计信息回调处理</a>
