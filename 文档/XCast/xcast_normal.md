@@ -2,7 +2,7 @@
 
 
 
-## <a name="xcast_get_set_property">xcast\_get_property</a>
+## <a name="xcast_get_set_property">xcast\_get/set_property</a>
 
 接口声明如下：
 
@@ -56,7 +56,9 @@
 
 # <a name="xcast_device"> 设备 </a>
 
-在<a href="xcast_flow.md?#xcast_handle_event_regist">注册监听</a>后，是通过<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">XC\_EVENT_DEVICE事件</a>回调出来的。业务上只需要详细了解回调内容并解析，即可做到设备的监听以及处理；
+##  <a name="xcast_device_hotplug">设备插拔监听</a>
+* 在<a href="xcast_flow.md?#xcast_handle_event_regist">注册监听</a>后，是通过<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">XC\_EVENT_DEVICE事件</a>回调出来的。业务上只需要详细了解回调内容并解析，即可做到设备的监听以及处理；
+* 设置与房间独立的，
 
 以下是进房前设备更新插拔回调的内容：<font color="red">通过回调，业务上决策选择要打开的设备并进行记录；</font>
 
@@ -64,53 +66,82 @@
 ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(7),"src":"ext1"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(7),"src":"ext2"]["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(7),"src":"ext3"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(7),"src":"ext4"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(2),"src":"screen-capture"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(5),"src":"扬声器 (Realtek High Definition Audio)"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(1),"src":"USB 视频设备"] ["state":int32(1),"err":int32(0),"type":int32(3),"class":int32(1),"src":"USB 视频设备"] ["state":int32(1),"err":int32(0),"type":int32(1),"class":int32(1),"src":"USB 视频设备"] ["state":int32(2),"err":int32(0),"type":int32(2),"class":int32(5),"src":"扬声器 (Realtek High Definition Audio)"] 
 ```
 
-进房前可以调以下代码进行摄像头的预览 : 
 
-// TODO : 补日志
-
-如何在进房后立即打开摄像头预览以及上行
-
-1.xcast_
-
-
-## <a name="xcast_device_deviceinfo"> 设备信息回调 </a>
-
-
-
-
-
-
+<!--## <a name="xcast_device_deviceinfo"> 设备信息回调 </a>
 ## <a name="xcast_device_hotplug">设备热插拔</a>
-
-
-
 ### <a name="xcast_device_detect_camera"> 摄像头检测 </a>
 ### <a name="xcast_device_detect_mic"> 麦克风检测 </a>
-### <a name="xcast_device_detect_speaker"> 扬声器检测 </a>
+### <a name="xcast_device_detect_speaker"> 扬声器检测 </a>-->
 
-## <a name="xcast_device_oper"> 设备操作 </a>
 
-### <a name="xcast_device_oper_camera"> 摄像头 </a>
+## <a name="xcast_device_camera">摄像头</a>
 
-#### <a name="xcast_device_oper_camera_preview"> 摄像头预览 </a>
+摄像头分为预览和采集；
+
+* 不在房间时，可以多个预览（PC上，移动端只支持一个预览），无上行；
+* 在房间时，可以多个预览（PC上，移动端只支持一个预览），只能指定一个摄像头上行；
+
+
+
+### <a name="xcast_device_cameralist">摄像头列表</a>
+
+```
+/** // 摄像头属性: 获取系统中所有摄像头的列表* "device.camera":{*   "get":{*     // 返回所有摄像头名的字符串数组*     "return":["vstring"]*   }* },*/#define XC_CAMERA                           "device.camera"
+
+```
+`xcast_get_property(XC_CAMERA)` 即可返回当前的摄像头列表；
+
+### <a name="xcast_device_cameradefault">默认摄像头</a>
+
+```
+/** // 摄像头属性: 获取/设置默认摄像头* "device.camera.default":{*   "get":{*     "return":[*       // 无摄像头*       null,*       // 默认摄像头名*       "vstring"*     ]*   },*   "set":{*     // 摄像头名*     "params":"vstring"*   }* },*/#define XC_CAMERA_DEFAULT                   "device.camera.default"
+
+```
+
+set : 用于指定进房间后默认的摄像头;
+
+get : 获取set方法设置的值；
+
+注意事项：
+* SDK里面默认调用了该方法，未指定摄像头采集时，则默认用该摄像头进行采集；
+
+
+### <a name="xcast_device_oper_camera_preview"> 摄像头预览 </a>
 
 ```
 xcast_data_t    prop;const char *src = evt["src"];		// src为摄像头id,  对应 XC_EVENT_DEVICE协议中的src字段prop.format(XC_CAMERA_PREVIEW, src);const char *str = prop.dump();int32_t ret = xcast_set_property(prop, xcast_data_t(true/false)); // 打开或关闭预览
 ```
 设置之后，摄像头采集数据会通过<a href="#xcast_device_oper_camera_rawdata">摄像头原始数据</a>回调给上层；
 
-#### <a name="xcast_device_oper_camera_videoout"> 摄像头上行 </a>
+
+### <a name="xcast_device_oper_camera_preview"> 指定/查询采集用的摄像头</a>
+
+```
+/** // 媒体流属性: 设置媒体流轨道上行音频/视频源* "stream.%s.%s.capture":{*   "get":{*     "return":[*       // 无视频源*       null,*       // 音频/视频源名(摄像头或麦克风)*       "vstring"*     ]*   },*   "set":{*     // 视频源名(摄像头名)*     "params":"vstring"*   }* },*/#define XC_TRACK_CAPTURE                    "stream.%s.%s.capture"
+
+```
+
+注意事项：
+
+* `XC_TRACK_CAPTURE` 可以指定房间内用的音视频采集设备；此处主要讲摄像头相关的；
+* `"stream.%s.%s.capture"` : 第一个`%s`为 `xcast_start_stream`参数中指定的`streamid`，第二个`%s`为当前设备名，具体看<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">`XC_EVENT_DEVICE`</a>中的`src`
+* 切换摄像头进行采集时，也是用的该方法处理；
+
+### <a name="xcast_device_oper_camera_videoout"> 摄像头上行控制 </a>
 
 ```
 // 打开摄像头并上行
 xcast_data_t    data, prop;
-prop.format(XC_TRACK_ENABLE,"stream1", "video-out");   // stream1 为xcast_start_stream时的 streamid,  video-out以应视频上行命令字
+prop.format(XC_TRACK_ENABLE,"stream1", "video-out");   
 const char * prostr = prop.dump();data["enable"] = true; // true上行,false不上行
 xcast_set_property(prop, data);
 
 ```
 
-#### <a name="xcast_device_oper_camera_rawdata"> 摄像头原始数据 </a>
+* `stream1` 为`xcast_start_stream`时的`streamid`,  video-out以应视频上行命令字。 
+*  上行命令字有 `video-out` (摄频上行) , `audio-out` （音频上行） , `sub-video-out` （辅路上行）
+
+### <a name="xcast_device_oper_camera_rawdata"> 摄像头原始数据 </a>
 
 示例代码详细可见 <a href="xcast_flow.md?#xcast_device_event_samplecode">设备事件回调处理中的xc_device_preview处理逻辑</a>
 
@@ -124,7 +155,7 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 
 <!--#### <a name="xcast_device_oper_camera_encodedata"> 摄像头原始编码数据 </a>-->
 
-#### <a name="xcast_device_oper_remote_camera_preview"> 渲染远端摄像头画面 </a>
+### <a name="xcast_device_remote_camera_preview"> 渲染远端摄像头画面 </a>
 
 远程数据是通过<a href="xcast_flow.md?#xcast_handle_event_trackeventcallback">track事件</a>的 <a href = "xcast_flow.md?#xcast_handle_event_trackeventcallback_samplecode">`xc_track_media`</a>回调相应的视频数据的,  拿到数据如处理如下：
 
@@ -135,33 +166,135 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 
 ```
 
-<!--#### <a name="xcast_device_oper_remote_camera_capturedata"> 获取远程摄像头数据 </a>-->
+### <a name="xcast_device_requestview">请求/取消房间内下行视频流</a>
+
+```
+/** // 媒体流属性: 启动/停止媒体流轨道* "stream.%s.%s.enable":{*   "set":{*     "params":{*       // true启动,false停止*       "*enable":"vbool",*       // 请求video下行的时候可以指定请求画面大小*       "size":["small","big"]*     }*   }* },*/#define XC_TRACK_ENABLE                     "stream.%s.%s.enable"
+
+```
+* `"stream.%s.%s.enable"` : 第一个`%s`为 <a href="xcast_flow.md?#xcast_handle_event_streameventcallback">`XC_EVENT_STREAM`</a>返回的其他流的`streamid`，第二个`%s`为参数可以 video-in (视频下行), audio-in (音频下行),  sub-video-in(辅路下行)；
+* `enable` : true 请求,false 不请求
+
+<!--#### <a name=" "> 获取远程摄像头数据 </a>-->
+
+### <a name="xcast_device_camera_state"> 摄像头状态查询 </a>
+
+```
+/** // 摄像头属性: 获取指定摄像头状态* "device.camera.%s.state":{*   "get":{*     "return":[*       // 无摄像头*       null,*       // 摄像头状态：xc_device_stopped，xc_device_running*       [xc_device_stopped，xc_device_running]*     ]*   }* },*/#define XC_CAMERA_STATE                     "device.camera.%s.state"
+
+```
+`%s`为当前设备名，具体看<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">`XC_EVENT_DEVICE`</a>中的`src`
+
+
+## <a name="xcast_device_mic"> 麦克风 </a>
+
+以下命令字中的`%s`, 均为当前要查询的麦克风名，具体看<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">`XC_EVENT_DEVICE`</a>中的`src`
+
+###  <a name="xcast_device_mic_list">查询麦克风列表</a>
+
+```
+/* xcast支持的麦克风属性 *//** // 麦克风属性: 获取系统中所有麦克风的列表* "device.mic":{*   "get":{*     "return":[*       // "null"表示不存在*       null,*       // 所有麦克风名的字符串数组*       ["vstring"]*     ]*   }* },*/#define XC_MIC                              "device.mic"```
+
+###  <a name="xcast_device_mic_default">默认麦克风</a>
+
+```/** // 麦克风属性: 获取/设置默认麦克风* "device.mic.default":{*   "get":{*     "return":[*       // 无麦克风*       null,*       // 默认麦克风名*       "vstring"*     ]*   },*   "set":{*     // 麦克风名*     "params":"vstring"*   }* },*/#define XC_MIC_DEFAULT                      "device.mic.default"
+```用法同 <a href="#xcast_device_cameradefault">默认摄像头</a>### <a name="xcast_device_mic_state">麦克风状态查询</a>
+```/** // 麦克风属性: 获取指定麦克风状态* "device.mic.%s.state":{*   "get":{*     "return":[*       // 无麦克风*       null,*       // 麦克风状态：xc_device_stopped，xc_device_running*       [xc_device_stopped，xc_device_running]*     ]*   }* },*/#define XC_MIC_STATE                        "device.mic.%s.state"```
+`%s` 为麦克风名，来源同<a href="#xcast_device_cameradefault">默认摄像头</a>
+
+### <a name="xcast_device_mic_loopback">LoopBack</a>
+
+```/** // 麦克风属性: 启动/关闭指定麦克风本地回放* "device.mic.%s.loopback":{*   "get":{*     "return":"vbool"*   },*   "set":{*     "params":"vbool"*   },* },*/#define XC_MIC_LOOPBACK                     "device.mic.%s.loopback"
+````%s` 为麦克风名，来源同<a href="#xcast_device_cameradefault">默认摄像头</a>
+
+
+### <a name="xcast_device_mic_volume">采集音量</a>
+
+```/** // 麦克风属性: 音量获取和设置* "device.mic.%s.volume":{*   "get":{*     // 音量值，取值范围[0,100]*     "return":"vuint32"*   },*   "set":{*     "params":"vuint32"*   }* },*/#define XC_MIC_VOLUME                       "device.mic.%s.volume"
+
+```
+
+
+### <a name="xcast_device_mic_audioout">控制音频上行</a>
+同 <a href="#xcast_device_oper_camera_videoout"> 摄像头上行控制 </a>
+
+
+### <a name="xcast_device_mic_requestaudio">请求/取消远程音频</a>
+同 <a  href="xcast_device_requestview">请求/取消房间内下行视频流</a>
 
 
 
-### <a name="xcast_device_oper_mic"> 麦克风操作 </a>
-### <a name="xcast_device_oper_spearker"> 扬声器操作 </a>
-### <a name="xcast_device_oper_screen"> 屏幕分享操作 </a>
+## <a name="xcast_device_spearker"> 扬声器 </a>
+
+以下命令字中的`%s`, 均为当前要查询的扬声器名，具体看<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">`XC_EVENT_DEVICE`</a>中的`src`
 
 
-## <a name="xcast_requestview">请求画面</a>
+### <a name="xcast_device_spearker_list"> 扬声器列表 </a>
+
+```
+/* xcast支持的扬声器属性 *//** // 扬声器属性: 获取系统中所有扬声器的列表* "device.speaker":{*   "get":{*     "return": [*       // "null"表示不存在*       null,*       // 所有扬声器名的字符串数组*       ["vstring"]*     ]*   }* },*/#define XC_SPEAKER                          "device.speaker"
+```### <a name="xcast_device_spearker_default"> 默认扬声器 </a>
+
+```/** // 扬声器属性: 获取/设置默认扬声器* "device.speaker.default":{*   "get":{*     "return":[*       // 无扬声器*       null,*       // 默认扬声器名*       "vstring"*     ]*   },*   "set":{*     // 扬声器名*     "params":"vstring",*     "return":null*   }* },*/#define XC_SPEAKER_DEFAULT                  "device.speaker.default"
+```
+同<a name="xcast_device_camera_default">默认报像头</a>
+
+### <a name="xcast_device_spearker_onoff"> 开/关扬声器 </a>
+
+```/** // 扬声器属性: 打开/关闭扬声器* "device.speaker.enable":{*   "get":{*     "return":"vbool"*   },*   "set":{*     "params":"vbool"*   }* },*/#define XC_SPEAKER_ENABLE                   "device.speaker.%s.enable"```
+
+### <a name="xcast_device_spearker_mode"> 扬声器模式(外放/耳机切换) </a>
+
+```/* * // 扬声器属性: 打开/关闭耳机模式 * "device.speaker.earphone-mode":{ *   "get":{ *     "return":"vbool" *   }, *   "set":{ *     "params":"vbool" *   } * }, */#define XC_SPEAKER_EARPHONE_MODE            "device.speaker.%s.earphone-mode"```
+
+### <a name="xcast_device_spearker_volume"> 扬声器音量控制 </a>
+
+```/** // 扬声器属性: 音量获取和设置* "device.speaker.volume":{*   "get":{*     // 音量值，取值范围[0,100]*     "return":"vuint32"*   },*   "set":{*     "params":"vuint32"*   }* },*/#define XC_SPEAKER_VOLUME                   "device.speaker.%s.volume"
+
+```
 
 
-## <a name="xcast_externalcapture">自定义采集</a>
 
 
-## <a name="xcast_outin">上下行角色权限控制</a>
-
-## <a name="xcast_render">画面渲染</a>
-
-### <a name="xcast_preview">画面预览</a>
 
 
-## <a name="xcast_changerole">角色切换/上下麦</a>
 
-## <a name="xcast_render">美颜接入</a>
 
-## <a name="xcast_exception">异常处理（如后台，中断等事件）</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--以下暂不加，VIPKID未用到
+### <a name="xcast_device_oper_screen"> 屏幕分享操作 </a>-->
+
+
+<!--## <a name="xcast_requestview">请求画面</a>-->
+<!--## <a name="xcast_externalcapture">自定义采集</a>-->
+
+
+<!--## <a name="xcast_outin">上下行角色权限控制</a>-->
+
+<!--## <a name="xcast_render">画面渲染</a>
+
+### <a name="xcast_preview">画面预览</a>-->
+
+
+<!--## <a name="xcast_changerole">角色切换/上下麦</a>-->
+
+<!--## <a name="xcast_render">美颜接入</a>-->
+
+<!--## <a name="xcast_exception">异常处理（如后台，中断等事件）</a>
 
 
 ## <a name="xcast_event_detail">事件详细处理</a>
@@ -169,7 +302,7 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 
 ## <a name="xcast_event_detail">原QAVEndpoint事件通知</a>
 
-## <a name="xcast_error_code">错误码整理</a>
+## <a name="xcast_error_code">错误码整理</a>-->
 
 ## <a name="xcast_define_detail">xcast_define明细</a>
 
