@@ -282,17 +282,20 @@ int32_t ui_device_preview(xcast_data &evt, void *user_data){  const char      
 
 ## <a name="xcast_track">TRACK</a>
 
-处理上下行流操作
+下列命令字中两个`%s`的含义：
+第一个`%s` : `xcast_start_stream`中填
 
-## <a name="xcast_track_enable">TRACK</a>
+### <a name="xcast_track_enable">启动/停止TRACK</a>
 
 ```
 /** // 媒体流属性: 启动/停止媒体流轨道* "stream.%s.%s.enable":{*   "set":{*     "params":{*       // true启动,false停止*       "*enable":"vbool",*       // 请求video下行的时候可以指定请求画面大小*       "size":["small","big"]*     }*   }* },*/#define XC_TRACK_ENABLE                     "stream.%s.%s.enable"```
 
-### <a name="xcast_track_state">TRACK</a>
+
+
+### <a name="xcast_track_state">查询TRACK状态</a>
 
 ```/** // 媒体流属性: 查询媒体流轨道状态* "stream.%s.%s.state":{*   "get":{*     // xc_track_stopped停止,xc_track_running运行*     "return":[xc_track_stopped,xc_track_running]*   }* },*/#define XC_TRACK_STATE                      "stream.%s.%s.state"
-```## <a name="xcast_track_capture">TRACK</a>
+```### <a name="xcast_track_capture">指定采集</a>
 
 ```/** // 媒体流属性: 设置媒体流轨道上行音频/视频源* "stream.%s.%s.capture":{*   "get":{*     "return":[*       // 无视频源*       null,*       // 音频/视频源名(摄像头或麦克风)*       "vstring"*     ]*   },*   "set":{*     // 视频源名(摄像头名)*     "params":"vstring"*   }* },*/#define XC_TRACK_CAPTURE                    "stream.%s.%s.capture"
 ```
