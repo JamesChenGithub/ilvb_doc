@@ -14,9 +14,9 @@
 
 ## 老师设置
 ### 摄像头
-1. 摄像头列表；参考 <a name="xcast_normal.md?#xcast_device_cameralist">摄像头列表</a>，并配合处理好<a name="xcast_flow.md?#xcast_handle_event_deviceeventcallback">设备事件</a>的处理;
-2. 摄像头分开预览； 参考： <a name="xcast_normal.md?#xcast_device_oper_camera_preview"> 摄像头预览 </a>
-3. 切换摄像头； 参考： <a name="xcast_normal.md?#xcast_device_oper_camera_preview"> 指定/查询采集用的摄像头</a>
+1. 摄像头列表；参考 <a href="xcast_normal.md?#xcast_device_cameralist">摄像头列表</a>，并配合处理好<a href="xcast_flow.md?#xcast_handle_event_deviceeventcallback">设备事件</a>的处理;
+2. 摄像头分开预览； 参考： <a href="xcast_normal.md?#xcast_device_oper_camera_preview"> 摄像头预览 </a>
+3. 切换摄像头； 参考： <a href="xcast_normal.md?#xcast_device_oper_camera_preview"> 指定/查询采集用的摄像头</a>
 
 ### 麦克风
 1. 麦克风列表 ：参考<a name="xcast_normal.md?#xcast_device_mic_list">查询麦克风列表</a>
