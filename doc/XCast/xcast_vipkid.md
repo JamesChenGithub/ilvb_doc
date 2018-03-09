@@ -19,11 +19,11 @@
 3. 切换摄像头； 参考： <a href="xcast_normal.md?#xcast_device_oper_camera_preview"> 指定/查询采集用的摄像头</a>
 
 ### 麦克风
-1. 麦克风列表 ：参考<a name="xcast_normal.md?#xcast_device_mic_list">查询麦克风列表</a>
-2. mic音量 ：参考<a name="xcast_normal.md?#xcast_device_mic_volume">采集音量</a>
-3. LoopBack : 参考<a name="xcast_normal.md?#xcast_device_mic_loopback">LoopBack</a>
+1. 麦克风列表 ：参考<a href="xcast_normal.md?#xcast_device_mic_list">查询麦克风列表</a>
+2. mic音量 ：参考<a href="xcast_normal.md?#xcast_device_mic_volume">采集音量</a>
+3. LoopBack : 参考<a href="xcast_normal.md?#xcast_device_mic_loopback">LoopBack</a>
 4. 回音消除； <font color='red'> 待补充 </font>
-5. 麦克风切换 : 参考 <a name="xcast_normal.md?#xcast_device_oper_camera_preview"> 指定/查询采集用的麦克风</a>
+5. 麦克风切换 : 参考 <a href="xcast_normal.md?#xcast_device_oper_camera_preview"> 指定/查询采集用的麦克风</a>
 
 ### 扬声器
 1. 声音检测 ： 业务播放一个声音文件即可；
