@@ -9,8 +9,8 @@
 
 ## 老师进房
 1.  <a name="teacher_audio_out">音频上麦</a> ：<a name="xcast_flow.md?#xcast_handle_event_streameventcallback">处理进房成功回调(stream事件，xc\_stream\_updated)</a>之后，默认打开麦克风并且上行 , 参考<a href="xcast_normal.md?#xcast_device_oper_camera_videoout"> 麦克风上行控制 </a>
-2. <a name="teacher_video_out">视频上麦</a> : 手动打开摄像头并且上行，画面渲染 , 参考<a href="xcast_normal.md?#xcast_device_oper_camera_videoout"> 摄像头上行控制 </a>，自己的画面渲染，拿到<a name="xcast_normal.md?#xcast_device_oper_camera_rawdata"> 摄像头原始数据 </a>自行渲染
-3. <a name="render_student_video">渲染学生画面</a> ：参考<a name="xcast_normal.md?#xcast_device_remote_camera_preview"> 渲染远端摄像头画面 </a>
+2. <a name="teacher_video_out">视频上麦</a> : 手动打开摄像头并且上行，画面渲染 , 参考<a href="xcast_normal.md?#xcast_device_oper_camera_videoout"> 摄像头上行控制 </a>，自己的画面渲染，拿到<a href="xcast_normal.md?#xcast_device_oper_camera_rawdata"> 摄像头原始数据 </a>自行渲染
+3. <a name="render_student_video">渲染学生画面</a> ：参考<a href="xcast_normal.md?#xcast_device_remote_camera_preview"> 渲染远端摄像头画面 </a>
 
 ## 老师设置
 ### 摄像头
