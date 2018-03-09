@@ -1,5 +1,5 @@
 
-# VIPKID使用流程
+# VIPKID集成XCast流程
 
 ## XCast基础流程接入
 
