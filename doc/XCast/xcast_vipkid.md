@@ -5,6 +5,7 @@
 
 1. 老师学生接入xcast主流程详细参考 <a href = "xcast_flow.md">XCast关键流程接入</a>；
 2. 注意监听<a name="xcast_flow.md?#xcast_handle_event_deviceeventcallback">设备事件</a>；
+3. 进行以下集成时，请优先阅读 <a href="xcast_normal.md?#xcast_get_set_property">xcast\_get/set_property</a> (主要讲述下列步骤如何使用操作)
 
 ## 老师进房
 1.  <a name="teacher_audio_out">音频上麦</a> ：<a name="xcast_flow.md?#xcast_handle_event_streameventcallback">处理进房成功回调(stream事件，xc\_stream\_updated)</a>之后，默认打开麦克风并且上行 , 参考<a href="xcast_normal.md?#xcast_device_oper_camera_videoout"> 麦克风上行控制 </a>
