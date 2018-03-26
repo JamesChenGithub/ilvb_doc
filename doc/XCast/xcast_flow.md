@@ -17,7 +17,7 @@
 
 ## <a name="xcast_flow">xcast运行流程</a>
 
-<img src="vipkid_flow.png">
+<img src="xcast_flow.png">
 
 ## <a name="xcast_data_t"> xcast\_data\_t基础参数类介绍</a>
 
