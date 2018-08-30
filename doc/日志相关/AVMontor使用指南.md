@@ -43,7 +43,7 @@ AV_Monitor是帮助用户定位排除网络问题的实时监控工具。
 * 客户端ip:122.224.77.194		:  可用<a href="http://ip138.com/">ip138</a>确认用户区域
 * 接口机ip:101.226.235.37		： 可用<a href="http://ip138.com/">ip138</a>确认分配置的接口机位于何处
 * 流控ip:10.49.97.137			： 该地址为局域网地址，可用<a href="tnm2.oa.com">网管系统</a>查询是否进入到测试环境，如下图划线处显示`测试`字样，即为进入到测试环境
-										 <img src="https://main.qcloudimg.com/raw/ed2b50c1fdfea7dcc01593336923e918.png">
+										 <img src="https://main.qcloudimg.com/raw/ed2b50c1fdfea7dcc01593336923e918.pngqqqqq">
 										 
 ### 进房间带上的能力
 流控信息区展示： 可用于确认出问时进房的配置是否与spear匹配，<font color="red">通常没有拉到配置，使用sdk默认配置会从这里看出来 (主要通过音视频参数可看出)</font> 
