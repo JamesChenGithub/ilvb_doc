@@ -1,2 +1,0 @@
-HwEnc=1
-HwDec=1
